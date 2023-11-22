@@ -1,0 +1,98 @@
+[code]
+# define ENA1 11 
+# define ENA2 10
+# define IN1 9
+# define IN2 8
+# define IN3 7
+# define IN4 6
+# define capteur_G 5
+# define capteur_M 4
+# define capteur_D 3
+int distance_G;
+int distance_M;
+int distance_D;
+int a,b;
+
+
+// Fonction pour gérer les valeurs des vitesses des roues gauche et droite respectivement
+void action(int vitesseG, int vitesseD){
+    digitalWrite(IN1,LOW);  // IN1 et IN2 sont les réglage de rotation de la roue de droite
+    digitalWrite(IN2,HIGH); // IN1: Antihoraire et IN2: Horaire 
+    digitalWrite(IN3,HIGH); // IN3 et IN4 sont les réglage de rotation de la roue de droite
+    digitalWrite(IN4,LOW);  // IN3: Antihoraire et IN4: Horaire 
+    analogWrite(ENA1,vitesseG); // ENA1 gère la vitesse de la roue droite
+    analogWrite(ENA2,vitesseD); // ENA2 gère la vitesse de la roue gauche
+} 
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(capteur_G,INPUT);
+  pinMode(capteur_M,INPUT);
+  pinMode(capteur_D,INPUT);
+  pinMode(IN1,OUTPUT);
+  pinMode(IN2,OUTPUT);
+  pinMode(IN3,OUTPUT);
+  pinMode(IN4,OUTPUT);
+  pinMode(ENA1,OUTPUT);
+  pinMode(ENA2,OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  distance_G=digitalRead(capteur_G);
+  distance_M=digitalRead(capteur_M);
+  distance_D=digitalRead(capteur_D);
+
+  //On avance tout droit
+  if((distance_D==0 && distance_M==1 && distance_G==0) || ((distance_D==0 && distance_M==1 && distance_G==0))) 
+  {
+    action(150,150); 
+    
+    a = 100;
+    b = 125;
+  }
+
+  //virage brusque à gauche
+  if(distance_D==1 && distance_M==1  && distance_G==0)
+  {
+    action(30,200);
+    a = 0;
+    b = 100;  
+  }
+
+  //virage légé à gauche
+  if(distance_D==1 && distance_M==0 && distance_G==0)
+  {
+    action(30,90);  
+    a = 30;
+    b = 90;
+  }
+
+  //virage brusque à droite
+  if(distance_D==0 && distance_M==1  && distance_G==1)
+  {
+    action(200,30);
+    a = 100;
+    b = 0;  
+  }
+
+  //virage légé à droite
+  if(distance_D==0 && distance_M==0  && distance_G==1)
+  {
+    action(90,30);
+    a = 90;
+    b = 30;  
+  }
+
+  //Cas où tout les capteurs détectent
+  //On éffectue la mémorisation. Cad on récupéra la vitesse précedente enregistrer 
+  //par le moteur pour attribuer ça à la condition 000 ou 101
+  
+  if(distance_D==0 && distance_M==0  && distance_G==0)
+  {
+    action(a,b);  
+  }
+  
+}
+[/code]
