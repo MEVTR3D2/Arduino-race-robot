@@ -1,2 +1,2 @@
 # Arduino-race-robot
-A race robot on an arduino card
+Ce code est expressement fait pour des robots roulant ayant une carte arduino, 2 moteurs et 3 capteurs IR
